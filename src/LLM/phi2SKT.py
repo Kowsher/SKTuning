@@ -978,6 +978,56 @@ class PhiModel(PhiPreTrainedModel):
                 attention_mask=attention_mask,
             )
 
+
+        
+        #print("past_key_values", past_key_values)
+  
+        return {
+            "hidden_states": hidden_states,
+        }
+
+class PhiModel2(PhiPreTrainedModel):
+    """Phi model."""
+
+    _keys_to_ignore_on_load_missing = [""]
+    _keys_to_ignore_on_load_unexpected = [r"h\.\d+\.mlp.(fc_in|fc_out)\.(weight|bias)"]
+
+    def __init__(self, config: PhiConfig) -> None:
+        super().__init__(config)
+
+        self.embd = Embedding(config)
+        self.h = nn.ModuleList([ParallelBlock(config, block_idx=i) for i in range(config.n_layer)])
+        self.gradient_checkpointing = False
+        self.post_init()
+
+    def get_input_embeddings(self) -> nn.Embedding:
+        return self.embd.wte
+
+    def set_input_embeddings(self, new_embeddings: nn.Embedding) -> None:
+        self.embd.wte = new_embeddings
+
+    def forward(
+        self,
+        input_ids=None,
+        hidden_states=None,
+        past_key_values: Optional[Union[torch.FloatTensor, InferenceParams]] = None,
+        attention_mask: Optional[torch.BoolTensor] = None,
+    ) -> torch.FloatTensor:
+        if hidden_states is None:
+            #print('hidden_states none')
+            hidden_states = self.embd(input_ids)
+            sz = hidden_states.shape[0]
+        else:
+            sz = hidden_states.shape[0]
+            
+        
+        for layer in self.h:
+            hidden_states = layer(
+                hidden_states,
+                past_key_values=past_key_values,
+                attention_mask=attention_mask,
+            )
+
         past_key_values = InferenceParams(
                 max_seqlen=self.config.n_positions,
                 max_batch_size=sz,
@@ -993,7 +1043,6 @@ class PhiModel(PhiPreTrainedModel):
             "hidden_states": hidden_states,
             "past_key_values": past_key_values,
         }
-
 
 
 class PromptEncoder(torch.nn.Module):
@@ -1194,7 +1243,7 @@ class PrefixForSequenceClassification(PreTrainedModel):
         super().__init__(config)
         self.num_labels = config.num_labels
         
-        self.transformer =  PhiModel.from_pretrained(config._name_or_path)
+        self.transformer =  PhiModel2.from_pretrained(config._name_or_path)
         
         self.dropout = torch.nn.Dropout(config.hidden_dropout)
         self.score = torch.nn.Linear(config.hidden_size, config.num_labels)
