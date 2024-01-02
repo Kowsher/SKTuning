@@ -47,7 +47,7 @@ class PrefixEncoder(torch.nn.Module):
         tokenizer = AutoTokenizer.from_pretrained(config._name_or_path)
         
         init_token_ids = tokenizer(config.text, return_tensors='pt')['input_ids']
-        print("Prefix sequence length", init_token_ids.shape[1])
+        print("Prefix sequence length: ", init_token_ids.shape[1])
         tokenizer=None
 
         self.embedding = torch.nn.Embedding(init_token_ids.shape[1], config.hidden_size)
@@ -77,6 +77,7 @@ class PrefixEncoder(torch.nn.Module):
 
 
         inputs_embeds = self.embedding(virtual_tokens.to(device))
+        inputs_embeds=self.dropout(inputs_embeds)
         outputs = self.transfromer(
             inputs_embeds=inputs_embeds.unsqueeze(0).repeat(batch_size, 1, 1)
         )        
@@ -157,11 +158,6 @@ class PrefixForSequenceClassification(PreTrainedModel):
         outputs = self.transformer(
             input_ids,
             attention_mask=attention_mask,
-            # token_type_ids=token_type_ids,
-            # position_ids=position_ids,
-            head_mask=head_mask,
-            output_attentions=output_attentions,
-            output_hidden_states=output_hidden_states,
             return_dict=return_dict,
             past_key_values=past_key_values,
         )
@@ -216,7 +212,7 @@ class PromptEncoder(torch.nn.Module):
         tokenizer = AutoTokenizer.from_pretrained(config._name_or_path)
         
         init_token_ids = tokenizer(config.text, return_tensors='pt')['input_ids']
-        print("Prompt sequence length", init_token_ids.shape[1])
+        print("Prompt sequence length: ", init_token_ids.shape[1])
         #print("config.pre_seq_len, config.hidden_size", config.pre_seq_len, config.hidden_size)
         tokenizer=None
 
@@ -245,9 +241,9 @@ class PromptEncoder(torch.nn.Module):
         batch_size=None,
 
     ):
-        #print('hi', virtual_tokens)
 
         projection = self.embedding(virtual_tokens.to(device))
+        projection=self.dropout(projection)
         
         if config.transform==True:
             projection = self.transform(projection)
@@ -308,13 +304,8 @@ class PromptForSequenceClassification(PreTrainedModel):
 
         outputs = self.transformer(
             # input_ids,
-            attention_mask=attention_mask,
-            # token_type_ids=token_type_ids,
-            # position_ids=position_ids,
-            head_mask=head_mask,
             inputs_embeds=inputs_embeds,
-            output_attentions=output_attentions,
-            output_hidden_states=output_hidden_states,
+            attention_mask=attention_mask,
             return_dict=return_dict,
             # past_key_values=past_key_values,
         )
