@@ -32,3 +32,25 @@ The SK-Tuning method figure is shown below:
 the backward pass to the trainable adapter. Notably, in the context of prompt-tuning (on the right), the The <span style="color:red">no sign</span> signifies the
 discontinuation of the forward pass beyond a certain point. This is because we exclusively initialize layer-specific semantic
 information for the prompt, rendering the continuation of the forward pass unnecessary for the remaining layer
+
+
+
+### Setup
+We conduct our experiment with Anaconda3. If you have installed Anaconda3, then create the environment for P-tuning v2:
+
+```shell
+conda create -n RT python=3.10.12
+conda activate RT
+```
+
+After we setup basic conda environment, install pytorch related packages via:
+
+```shell
+conda install pytorch torchvision torchaudio pytorch-cuda=11.8 -c pytorch -c nvidia
+```
+
+Finally, install other python packages we need:
+
+```shell
+pip install -r requirements.txt
+```
