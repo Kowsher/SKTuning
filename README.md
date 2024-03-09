@@ -39,8 +39,8 @@ information for the prompt, rendering the continuation of the forward pass unnec
 We conduct our experiment with Anaconda3. If you have installed Anaconda3, then create the environment for P-tuning v2:
 
 ```shell
-conda create -n RT python=3.10.12
-conda activate RT
+conda create -n ST python=3.10.12
+conda activate ST
 ```
 
 After we setup basic conda environment, install pytorch related packages via:
