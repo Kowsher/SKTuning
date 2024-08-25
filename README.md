@@ -3,25 +3,7 @@
 #  Parameter-Efficient Fine-Tuning of Large Language Models using Semantic Knowledge Tuning
 
 ## Abstract
-In recent years, fine-tuning Large Language Models (LLMs) for specific downstream tasks using prompts and prefixes has
-gained considerable attention in Natural Language Processing (NLP) research due to its computational efficiency. However,
-conventional methods for prompt and prefix tuning often rely on trainable virtual tokens within an adapter, while the core
-LLM parameters remain fixed. These virtual tokens lack inherent semantic meaning, necessitating extensive training to
-acquire task-specific knowledge and leading to suboptimal performance. In this paper, we introduce Semantic Knowledge
-Tuning (SK-Tuning) as an innovative approach to enhance the efficient fine-tuning of LLMs within the context of prefix and
-prompt tuning. In contrast to traditional methods that employ arbitrary virtual tokens, SK-Tuning harnesses real, semantically
-meaningful prompt or prefix text for adapter training. Our method adopts an approach, wherein one frozen LLM is employed to
-extract the semantic information from the prefix or prompt. This information is subsequently refined through a trainable adapter.
-Following this, the same frozen LLM is utilized to obtain embeddings of the input text alongside the prefix or prompt embedding.
-The resulting combined embedding is fine-tuned for downstream tasks. By leveraging the LLM’s innate ability to comprehend
-the meaning of prompt or prefix text, in conjunction with its zero-shot capabilities, SK-Tuning exhibits rapid convergence during
-training and significantly enhances task performance. Experimental results showcased in this study highlight the superiority
-of SK-Tuning over traditional parameter fine-tuning approaches in terms of efficiency, effectiveness, training speed, and the
-number of trainable parameters. We conduct extensive experiments across a spectrum of downstream tasks, encompassing
-sequence classification, token classification, and Natural Language Inference (NLI). Additionally, we provide comparative
-analyses between SK-Tuning and other parameter-efficient methods, such as prompt tuning, prefix tuning, p-tuning, and
-lora. These findings underscore SK-Tuning’s potential as a potent tool for elevating LLM performance while maintaining high
-parameter efficiency, thus contributing to the advancement of the NLP field with more efficient and effective applications.
+In recent years, improving Large Language Models (LLMs) for specific tasks using prompts has become popular in language research due to its low computational cost. Traditional methods like prefix tuning use special, modifiable tokens that do not have real meaning, requiring a lot of training to work well and often not performing optimally. We introduce a new method called Semantic Knowledge Tuning (SK-Tuning) for prompt and prefix tuning which uses meaningful words instead of random tokens for this tuning. This method involves using a fixed LLM to first understand and process the semantic content of the prompt in zero-shot capabilities. Then, it combines the processed prompt with the input text to enhance the model's performance on specific tasks. Our experiments show that SK-Tuning trains faster, uses fewer parameters, and performs better on tasks like text classification and understanding compared to other tuning methods. This approach offers a promising way to make LLMs more efficient and effective in processing language tasks.
 
 
 
